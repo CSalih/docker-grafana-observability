@@ -4,7 +4,7 @@ services:
   node-exporter:
     image: prom/node-exporter:latest
     container_name: grafana-node-exporter
-    restart: always
+    restart: unless-stopped
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -19,10 +19,28 @@ services:
     networks:
       - monitoring
 
+  container-exporter:
+    image: google/cadvisor:latest
+    container_name: grafana-container-exporter
+    restart: unless-stopped
+    privileged: true
+    devices: 
+     - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    expose:
+      - 8080
+    networks:
+      - monitoring
+
   prometheus:
     image: prom/prometheus:latest
     container_name: grafana-prometheus
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
