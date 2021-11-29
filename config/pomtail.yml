@@ -1,0 +1,38 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: apache
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: apache
+          env: dev
+          host: localhost
+          __path__: /var/log/apache/*.log
+    pipeline_stages:
+    - match:
+        selector: '{job="apache2"}'
+        stages:
+        - regex:
+            expression: '^(?P<remote_addr>[\w\.]+) - (?P<remote_user>[^ ]*) \[(?P<time_local>.*)\] "(?P<method>[^ ]*) (?P<request>[^ ]*) (?P<protocol>[^ ]*)" (?P<status>[\d]+) (?P<bytes_sent>[\d]+) "(?P<referer>[^"]*)" "(?P<user_agent>[^"]*)"?'
+        - labels:
+            host:
+            remote_addr:
+            remote_user:
+            time_local:
+            method:
+            request:
+            protocol:
+            status:
+            bytes_sent:
+            referer:
+            user_agent:
