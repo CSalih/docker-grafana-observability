@@ -39,9 +39,12 @@ services:
 
   promtail:
     image: grafana/promtail:2.4.0
+    container_name: grafana-promtail
+    restart: unless-stopped
     volumes:
       - ./config/pomtail.yml:/etc/promtail/config.yml
       - /var/log:/var/log:ro
+      - pomtail_data:/data
     command: -config.file=/etc/promtail/config.yml
     networks:
       - loki
@@ -66,6 +69,10 @@ services:
 
   loki:
     image: grafana/loki:2.4.0
+    container_name: grafana-loki
+    restart: unless-stopped
+    volumes:
+      - loki_data:/loki
     expose:
       - 3100
     networks:
@@ -86,6 +93,8 @@ services:
 volumes:
   prometheus_data: {}
   grafana_data: {}
+  pomtail_data: {}
+  loki_data: {}
 
 networks:
   monitoring:
