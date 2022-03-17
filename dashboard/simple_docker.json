@@ -1,4 +1,31 @@
 {
+  "title": "Docker Simple Monitoring",
+  "uid": "simple_docker_dashboard",
+  "version": 37,
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "5.2.1"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "5.0.0"
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -29,10 +56,7 @@
   "liveNow": false,
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -108,10 +132,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -185,10 +206,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -268,10 +286,7 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -427,10 +442,7 @@
       "pluginVersion": "8.3.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": true,
           "expr": "sum (rate (container_memory_working_set_bytes{job=~\"$job\", instance=~\"$instance\", name=~\"$name\"}[$interval])) / sum (machine_memory_bytes{job=~\"$job\", instance=~\"$instance\"}) * 100",
           "hide": false,
@@ -443,10 +455,7 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -525,10 +534,7 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -603,10 +609,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -681,10 +684,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -759,10 +759,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -888,10 +885,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "decimals": 0,
           "editable": true,
           "error": false,
@@ -1028,10 +1022,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1176,10 +1167,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1403,10 +1391,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1522,10 +1507,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1623,10 +1605,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1726,10 +1705,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1851,10 +1827,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1945,10 +1918,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ZVGuRHcnz"
-          },
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 5,
@@ -2058,10 +2028,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "editable": true,
       "error": false,
       "fill": 3,
@@ -2153,10 +2120,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ZVGuRHcnz"
-      },
+      "datasource": "${DS_PROMETHEUS}",
       "editable": true,
       "error": false,
       "fill": 3,
@@ -2527,10 +2491,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "ZVGuRHcnz"
-        },
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(container_last_seen, instance)",
         "hide": 0,
         "includeAll": true,
@@ -2676,6 +2637,8 @@
       }
     ]
   },
+  "timezone": "browser",
+  "weekStart": "",
   "time": {
     "from": "now-24h",
     "to": "now"
@@ -2704,10 +2667,5 @@
       "7d",
       "30d"
     ]
-  },
-  "timezone": "browser",
-  "title": "Docker Simple Monitoring",
-  "uid": "xH3RgYc7z",
-  "version": 37,
-  "weekStart": ""
+  }
 }
