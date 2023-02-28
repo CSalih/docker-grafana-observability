@@ -52,7 +52,7 @@ services:
       - monitoring
 
   promtail:
-    image: grafana/promtail:2.4.0
+    image: grafana/promtail:latest
     container_name: grafana-promtail
     restart: unless-stopped
     volumes:
@@ -82,7 +82,7 @@ services:
       - monitoring
 
   loki:
-    image: grafana/loki:2.4.0
+    image: grafana/loki:latest
     container_name: grafana-loki
     restart: unless-stopped
     volumes:
