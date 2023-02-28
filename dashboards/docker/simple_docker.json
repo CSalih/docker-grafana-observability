@@ -597,7 +597,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "container_memory_working_set_bytes{id=\"/docker\", job=~\"$job\", instance=~\"$instance\"}",
+          "expr": "sum(rate(container_memory_working_set_bytes{job=~\"$job\", instance=~\"$instance\"}[$interval]))",
           "interval": "10s",
           "intervalFactor": 1,
           "legendFormat": "",
