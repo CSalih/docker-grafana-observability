@@ -20,3 +20,12 @@ datasources:
     url: http://loki:3100
     jsonData:
       maxLines: 1000
+  - name: Mimir
+    type: prometheus
+    access: proxy
+    orgId: 1
+    url: http://mimir:9009/prometheus
+    basicAuth: false
+    isDefault: false
+    version: 1
+    editable: false

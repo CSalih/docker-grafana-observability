@@ -18,6 +18,25 @@ services:
     networks:
       - monitoring
 
+  agent:
+    image: grafana/agent:main
+    container_name: grafana-agent
+    restart: unless-stopped
+    entrypoint:
+      - /bin/grafana-agent
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - /etc/agent/agent.river
+    environment:
+      AGENT_MODE: "flow"
+    volumes:
+      - ./config/agent.river:/etc/agent/agent.river
+      - /var/run:/var/run:ro
+    expose:
+      - 12345
+    networks:
+      - monitoring
+
   node-exporter:
     image: prom/node-exporter:latest
     container_name: grafana-node-exporter
@@ -81,6 +100,18 @@ services:
       - '--web.enable-lifecycle'
     expose:
       - 9090
+    networks:
+      - monitoring
+
+  mimir:
+    image: grafana/mimir:latest
+    command: ["-config.file=/etc/mimir-config/mimir.yml"]
+    container_name: grafana-mimir
+    restart: unless-stopped
+    volumes:
+      - ./config/mimir.yml:/etc/mimir-config/mimir.yml
+    expose:
+      - 9009
     networks:
       - monitoring
 

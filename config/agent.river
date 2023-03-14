@@ -1,0 +1,22 @@
+prometheus.scrape "default" {
+  targets = [{"__address__" = "localhost:12345"}]
+  forward_to = [prometheus.remote_write.prom.receiver]
+}
+
+
+// container exporter
+discovery.docker "docker" {
+  host = "unix:///var/run/docker.sock"
+}
+prometheus.scrape "docker" {
+  targets    = discovery.docker.docker.targets
+  forward_to = [prometheus.remote_write.prom.receiver]
+}
+
+
+// Datasource for Prometheus
+prometheus.remote_write "prom" {
+  endpoint {
+    url = "http://mimir:9009/api/v1/push"
+  }
+}
