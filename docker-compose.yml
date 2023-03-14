@@ -40,24 +40,6 @@ services:
     networks:
       - monitoring
 
-  container-exporter:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: grafana-container-exporter
-    restart: unless-stopped
-    privileged: true
-    devices:
-     - /dev/kmsg
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    expose:
-      - 8080
-    networks:
-      - monitoring
-
   promtail:
     image: grafana/promtail:latest
     container_name: grafana-promtail
