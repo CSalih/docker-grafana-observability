@@ -1,18 +1,33 @@
+// Monitor Grafana Agent
 prometheus.scrape "default" {
+  scrape_interval = "5m"
   targets = [{"__address__" = "localhost:12345"}]
   forward_to = [prometheus.remote_write.prom.receiver]
 }
-
 
 // container exporter
 discovery.docker "docker" {
   host = "unix:///var/run/docker.sock"
 }
 prometheus.scrape "docker" {
+  scrape_interval = "1m"
   targets    = discovery.docker.docker.targets
   forward_to = [prometheus.remote_write.prom.receiver]
 }
 
+// process exporter
+prometheus.exporter.process "thinkpad" {
+  procfs_path = "/host/proc"
+  matcher {
+    name = "{{.ExeFull}}"
+    cmdline = [".+"]
+  }
+}
+prometheus.scrape "thinkpad" {
+  scrape_interval = "5m"
+  targets    = prometheus.exporter.process.thinkpad.targets
+  forward_to = [prometheus.remote_write.prom.receiver]
+}
 
 // Datasource for Prometheus
 prometheus.remote_write "prom" {

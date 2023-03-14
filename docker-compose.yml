@@ -32,6 +32,7 @@ services:
     volumes:
       - ./config/agent.river:/etc/agent/agent.river
       - /var/run:/var/run:ro
+      - /proc:/host/proc:ro
     expose:
       - 12345
     networks:

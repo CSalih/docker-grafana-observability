@@ -22,6 +22,7 @@ datasources:
       maxLines: 1000
   - name: Mimir
     type: prometheus
+    uid: mimir
     access: proxy
     orgId: 1
     url: http://mimir:9009/prometheus
