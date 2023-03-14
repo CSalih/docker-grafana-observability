@@ -5,11 +5,14 @@ services:
     image: grafana/grafana-oss:latest
     container_name: grafana-ui
     restart: unless-stopped
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning
       - ./dashboards:/etc/dashboards
-      - ./config/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
-      - ./config/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yaml
     ports:
       - "3000:3000"
     networks:
