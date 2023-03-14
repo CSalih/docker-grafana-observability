@@ -29,6 +29,23 @@ prometheus.scrape "thinkpad" {
   forward_to = [prometheus.remote_write.prom.receiver]
 }
 
+// node exporter
+prometheus.exporter.unix {
+  procfs_path = "/host/proc"
+  sysfs_path = "/host/sys"
+  rootfs_path = "/rootfs"
+
+  filesystem {
+    mount_points_exclude = "^/(sys|proc|dev|host|etc)($|/)"
+  }
+}
+prometheus.scrape "unix_thinkpad" {
+  scrape_interval = "1m"
+  targets    = prometheus.exporter.unix.targets
+  forward_to = [prometheus.remote_write.prom.receiver]
+}
+
+
 // Datasource for Prometheus
 prometheus.remote_write "prom" {
   endpoint {
