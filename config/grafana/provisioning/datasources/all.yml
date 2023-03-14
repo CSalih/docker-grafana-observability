@@ -1,17 +1,6 @@
 apiVersion: 1
 
 datasources:
-  - name: Prometheus
-    type: prometheus
-    uid: prometheus
-    access: proxy
-    url: http://prometheus:9090
-    basicAuth: false
-    isDefault: true
-    version: 1
-    editable: false
-    jsonData:
-      httpMethod: GET
   - name: Loki
     type: loki
     uid: loki
@@ -20,3 +9,13 @@ datasources:
     url: http://loki:3100
     jsonData:
       maxLines: 1000
+  - name: Mimir
+    type: prometheus
+    uid: mimir
+    access: proxy
+    orgId: 1
+    url: http://mimir:9009/prometheus
+    basicAuth: false
+    isDefault: true
+    version: 1
+    editable: false

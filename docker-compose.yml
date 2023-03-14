@@ -18,39 +18,25 @@ services:
     networks:
       - monitoring
 
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: grafana-node-exporter
+  agent:
+    image: grafana/agent:main
+    container_name: grafana-agent
     restart: unless-stopped
+    entrypoint:
+      - /bin/grafana-agent
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - /etc/agent/agent.river
+    environment:
+      AGENT_MODE: "flow"
     volumes:
+      - ./config/agent.river:/etc/agent/agent.river
+      - /var/run:/var/run:ro
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     expose:
-      - 9100
-    networks:
-      - monitoring
-
-  container-exporter:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: grafana-container-exporter
-    restart: unless-stopped
-    privileged: true
-    devices:
-     - /dev/kmsg
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    expose:
-      - 8080
+      - 12345
     networks:
       - monitoring
 
@@ -66,21 +52,15 @@ services:
     networks:
       - loki
 
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: grafana-prometheus
+  mimir:
+    image: grafana/mimir:latest
+    command: ["-config.file=/etc/mimir-config/mimir.yml"]
+    container_name: grafana-mimir
     restart: unless-stopped
     volumes:
-      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--web.enable-lifecycle'
+      - ./config/mimir.yml:/etc/mimir-config/mimir.yml
     expose:
-      - 9090
+      - 9009
     networks:
       - monitoring
 
@@ -97,7 +77,6 @@ services:
       - loki
 
 volumes:
-  prometheus_data: {}
   grafana_data: {}
   promtail_data: {}
   loki_data: {}

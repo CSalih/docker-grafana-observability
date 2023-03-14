@@ -1,0 +1,54 @@
+// Monitor Grafana Agent
+prometheus.scrape "scrape_agent" {
+  scrape_interval = "5m"
+  targets = [{"__address__" = "localhost:12345"}]
+  forward_to = [prometheus.remote_write.local.receiver]
+}
+
+// container exporter
+discovery.docker "docker" {
+  host = "unix:///var/run/docker.sock"
+}
+prometheus.scrape "scrape_docker" {
+  scrape_interval = "1m"
+  targets    = discovery.docker.docker.targets
+  forward_to = [prometheus.remote_write.local.receiver]
+}
+
+// process exporter
+prometheus.exporter.process "local" {
+  procfs_path = "/host/proc"
+  matcher {
+    name = "{{.ExeFull}}"
+    cmdline = [".+"]
+  }
+}
+prometheus.scrape "scrape_process" {
+  scrape_interval = "5m"
+  targets    = prometheus.exporter.process.local.targets
+  forward_to = [prometheus.remote_write.local.receiver]
+}
+
+// node exporter
+prometheus.exporter.unix {
+  procfs_path = "/host/proc"
+  sysfs_path = "/host/sys"
+  rootfs_path = "/rootfs"
+
+  filesystem {
+    mount_points_exclude = "^/(sys|proc|dev|host|etc)($|/)"
+  }
+}
+prometheus.scrape "scrape_unix" {
+  scrape_interval = "1m"
+  targets    = prometheus.exporter.unix.targets
+  forward_to = [prometheus.remote_write.local.receiver]
+}
+
+
+// Datasource for Prometheus
+prometheus.remote_write "local" {
+  endpoint {
+    url = "http://mimir:9009/api/v1/push"
+  }
+}

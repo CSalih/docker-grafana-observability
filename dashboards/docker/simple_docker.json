@@ -1,36 +1,12 @@
 {
-  "title": "Docker Simple Monitoring",
-  "uid": "simple_docker_dashboard",
-  "version": 37,
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "5.2.1"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "5.0.0"
-    }
-  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -50,13 +26,14 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 893,
   "graphTooltip": 1,
-  "id": 3,
-  "iteration": 1639672102047,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "datasource": "prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -115,15 +92,21 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "time() - node_boot_time_seconds",
+          "expr": "time() - max(node_boot_time_seconds{job=~\"$job\", instance=~\"$instance\"})",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
+          "range": true,
           "refId": "A",
           "step": 1800
         }
@@ -132,7 +115,10 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -190,14 +176,20 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "count(rate(container_last_seen{name=~\".+\"}[$interval]))",
+          "expr": "count(rate(container_last_seen{name=~\".+\", job=~\"$job\", instance=~\"$instance\"}[$interval]))",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
+          "range": true,
           "refId": "A",
           "step": 1800
         }
@@ -206,7 +198,10 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -269,9 +264,13 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "min((node_filesystem_size_bytes{fstype=~\"xfs|ext4\"} - node_filesystem_free_bytes{fstype=~\"xfs|ext4\"} )/ node_filesystem_size_bytes{fstype=~\"xfs|ext4\"})",
           "hide": false,
@@ -286,7 +285,10 @@
       "type": "gauge"
     },
     {
-      "datasource": "prometheus",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -349,14 +351,20 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "((node_memory_MemTotal_bytes{} - node_memory_MemAvailable_bytes{}) / node_memory_MemTotal_bytes{}) * 100",
+          "expr": "((node_memory_MemTotal_bytes{job=~\"$job\", instance=~\"$instance\"} - node_memory_MemAvailable_bytes{job=~\"$job\", instance=~\"$instance\"}) / node_memory_MemTotal_bytes{job=~\"$job\", instance=~\"$instance\"}) * 100",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
+          "range": true,
           "refId": "A",
           "step": 1800
         }
@@ -366,6 +374,10 @@
     },
     {
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -374,10 +386,23 @@
       },
       "id": 55,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Overview",
       "type": "row"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -439,10 +464,13 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "sum (rate (container_memory_working_set_bytes{job=~\"$job\", instance=~\"$instance\", name=~\"$name\"}[$interval])) / sum (machine_memory_bytes{job=~\"$job\", instance=~\"$instance\"}) * 100",
           "hide": false,
@@ -455,7 +483,7 @@
       "type": "gauge"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -518,9 +546,21 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
+          "datasource": {
+            "0": "p",
+            "1": "r",
+            "2": "o",
+            "3": "m",
+            "4": "e",
+            "5": "t",
+            "6": "h",
+            "7": "e",
+            "8": "u",
+            "9": "s"
+          },
           "exemplar": true,
           "expr": "sum (rate (container_cpu_usage_seconds_total{job=~\"$job\", instance=~\"$instance\", name=~\"$name\"}[$interval])) / sum (machine_cpu_cores{job=~\"$job\", instance=~\"$instance\"}) * 100",
           "interval": "10s",
@@ -534,7 +574,7 @@
       "type": "gauge"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -593,9 +633,21 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
+          "datasource": {
+            "0": "p",
+            "1": "r",
+            "2": "o",
+            "3": "m",
+            "4": "e",
+            "5": "t",
+            "6": "h",
+            "7": "e",
+            "8": "u",
+            "9": "s"
+          },
           "exemplar": true,
           "expr": "sum(rate(container_memory_working_set_bytes{job=~\"$job\", instance=~\"$instance\"}[$interval]))",
           "interval": "10s",
@@ -609,7 +661,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -668,9 +720,21 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
+          "datasource": {
+            "0": "p",
+            "1": "r",
+            "2": "o",
+            "3": "m",
+            "4": "e",
+            "5": "t",
+            "6": "h",
+            "7": "e",
+            "8": "u",
+            "9": "s"
+          },
           "exemplar": true,
           "expr": "sum (machine_memory_bytes{job=~\"$job\", instance=~\"$instance\"})",
           "interval": "10s",
@@ -684,7 +748,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -743,9 +807,21 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
+          "datasource": {
+            "0": "p",
+            "1": "r",
+            "2": "o",
+            "3": "m",
+            "4": "e",
+            "5": "t",
+            "6": "h",
+            "7": "e",
+            "8": "u",
+            "9": "s"
+          },
           "exemplar": true,
           "expr": "sum (rate (container_cpu_usage_seconds_total{job=~\"$job\", instance=~\"$instance\"}[$interval]))",
           "interval": "10s",
@@ -759,7 +835,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -819,9 +895,21 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "targets": [
         {
+          "datasource": {
+            "0": "p",
+            "1": "r",
+            "2": "o",
+            "3": "m",
+            "4": "e",
+            "5": "t",
+            "6": "h",
+            "7": "e",
+            "8": "u",
+            "9": "s"
+          },
           "exemplar": true,
           "expr": "sum (machine_cpu_cores{job=~\"$job\", instance=~\"$instance\"})",
           "interval": "10s",
@@ -836,6 +924,10 @@
     },
     {
       "collapsed": true,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -885,7 +977,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "decimals": 0,
           "editable": true,
           "error": false,
@@ -926,6 +1018,18 @@
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "(((count(count(node_cpu_seconds_total{}) by (cpu))) - avg(sum by (mode)(rate(node_cpu_seconds_total{mode='idle',}[$__rate_interval])))) * 100) / count(count(node_cpu_seconds_total{}) by (cpu)) / 16",
               "interval": "",
@@ -1022,7 +1126,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1068,6 +1172,18 @@
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "node_filesystem_size_bytes{fstype=\"ext4\"} - node_filesystem_free_bytes{fstype=\"ext4\"}",
               "hide": false,
@@ -1167,7 +1283,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1208,6 +1324,18 @@
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "container_memory_rss{name=~\".+\"}",
               "hide": true,
               "intervalFactor": 2,
@@ -1216,6 +1344,18 @@
               "step": 20
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "sum(container_memory_rss{name=~\".+\"})",
               "hide": true,
               "intervalFactor": 2,
@@ -1224,6 +1364,18 @@
               "step": 20
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "container_memory_usage_bytes{name=~\".+\"}",
               "hide": true,
               "intervalFactor": 2,
@@ -1232,6 +1384,18 @@
               "step": 20
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "container_memory_rss{id=\"/\"}",
               "hide": true,
               "intervalFactor": 2,
@@ -1240,6 +1404,18 @@
               "step": 20
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "sum(container_memory_rss)",
               "hide": true,
               "intervalFactor": 2,
@@ -1248,6 +1424,18 @@
               "step": 20
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "node_memory_Buffers",
               "hide": true,
               "intervalFactor": 2,
@@ -1256,6 +1444,18 @@
               "step": 30
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "node_memory_MemFree",
               "hide": true,
               "intervalFactor": 2,
@@ -1264,6 +1464,18 @@
               "step": 20
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "node_memory_MemAvailable",
               "hide": true,
               "intervalFactor": 2,
@@ -1272,6 +1484,18 @@
               "step": 20
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
               "hide": false,
@@ -1282,6 +1506,18 @@
               "step": 600
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "node_memory_Inactive",
               "hide": true,
               "intervalFactor": 2,
@@ -1290,6 +1526,18 @@
               "step": 30
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "node_memory_KernelStack",
               "hide": true,
               "intervalFactor": 2,
@@ -1298,6 +1546,18 @@
               "step": 30
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "node_memory_Active",
               "hide": true,
               "intervalFactor": 2,
@@ -1306,6 +1566,18 @@
               "step": 30
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "node_memory_MemTotal - (node_memory_Active + node_memory_MemFree + node_memory_Inactive)",
               "hide": true,
               "intervalFactor": 2,
@@ -1314,6 +1586,18 @@
               "step": 40
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "node_memory_MemFree + node_memory_Inactive ",
               "hide": true,
               "intervalFactor": 2,
@@ -1322,6 +1606,18 @@
               "step": 30
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "container_memory_rss{name=~\".+\"}",
               "hide": true,
               "intervalFactor": 2,
@@ -1330,6 +1626,18 @@
               "step": 30
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "expr": "node_memory_Inactive + node_memory_MemFree + node_memory_MemAvailable",
               "hide": true,
               "intervalFactor": 2,
@@ -1391,7 +1699,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1432,6 +1740,18 @@
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "-sum(rate(container_fs_reads_bytes_total[$interval])) by (device)",
               "hide": false,
@@ -1443,6 +1763,18 @@
               "step": 600
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "sum(rate(container_fs_writes_bytes_total[$interval])) by (device)",
               "interval": "",
@@ -1487,11 +1819,24 @@
           }
         }
       ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Alert",
       "type": "row"
     },
     {
       "collapsed": true,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1507,7 +1852,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1548,6 +1893,18 @@
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "sum(rate(container_network_receive_bytes_total{job=~\"$job\", instance=~\"$instance\", name=~\"$name\"}[$interval])) by (id)",
               "interval": "",
@@ -1557,6 +1914,18 @@
               "step": 600
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "- sum(rate(container_network_transmit_bytes_total{job=~\"$job\", instance=~\"$instance\", name=~\"$name\"}[$interval])) by (id)",
               "hide": false,
@@ -1605,7 +1974,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1648,6 +2017,18 @@
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "sum(rate(container_network_receive_bytes_total{job=~\"$job\", instance=~\"$instance\", name=~\"$name\"}[$interval])) by (name)",
               "interval": "",
@@ -1657,6 +2038,18 @@
               "step": 240
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "- rate(container_network_transmit_bytes_total{job=~\"$job\", instance=~\"$instance\", name=~\"$name\"}[$interval])",
               "hide": true,
@@ -1705,7 +2098,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1750,6 +2143,18 @@
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "sum(rate(container_network_transmit_bytes_total{job=~\"$job\", instance=~\"$instance\", name=~\"$name\"}[$interval])) by (name)",
               "interval": "",
@@ -1759,6 +2164,18 @@
               "step": 240
             },
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "rate(container_network_transmit_bytes_total{job=~\"$job\", instance=~\"$instance\", name=~\"$name\"}[$interval])",
               "hide": true,
@@ -1807,11 +2224,24 @@
           }
         }
       ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Network",
       "type": "row"
     },
     {
       "collapsed": true,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1827,7 +2257,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -1868,6 +2298,18 @@
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "sum(rate(container_cpu_system_seconds_total{job=~\"$job\", instance=~\"$instance\", name=~\"$name\", name!=\"\"}[$interval])) * 100",
               "hide": false,
@@ -1918,7 +2360,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 5,
@@ -1961,6 +2403,18 @@
           "steppedLine": false,
           "targets": [
             {
+              "datasource": {
+                "0": "p",
+                "1": "r",
+                "2": "o",
+                "3": "m",
+                "4": "e",
+                "5": "t",
+                "6": "h",
+                "7": "e",
+                "8": "u",
+                "9": "s"
+              },
               "exemplar": true,
               "expr": "sum(rate(container_cpu_usage_seconds_total{job=~\"$job\", instance=~\"$instance\", name=~\"$name\",name!=\"\"}[$interval])) by (name) * 100",
               "hide": false,
@@ -2007,11 +2461,24 @@
           }
         }
       ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "CPU",
       "type": "row"
     },
     {
       "collapsed": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2020,6 +2487,15 @@
       },
       "id": 45,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Memory",
       "type": "row"
     },
@@ -2028,7 +2504,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "editable": true,
       "error": false,
       "fill": 3,
@@ -2061,7 +2537,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2071,6 +2547,18 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "0": "p",
+            "1": "r",
+            "2": "o",
+            "3": "m",
+            "4": "e",
+            "5": "t",
+            "6": "h",
+            "7": "e",
+            "8": "u",
+            "9": "s"
+          },
           "exemplar": true,
           "expr": "sum(container_memory_rss{job=~\"$job\", instance=~\"$instance\", name=~\"$name\", name!=\"\"}) by (name)",
           "hide": false,
@@ -2120,7 +2608,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "prometheus",
+      "datasource": "${DS_PROMETHEUS}",
       "editable": true,
       "error": false,
       "fill": 3,
@@ -2153,7 +2641,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.2",
+      "pluginVersion": "9.4.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2163,6 +2651,18 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "0": "p",
+            "1": "r",
+            "2": "o",
+            "3": "m",
+            "4": "e",
+            "5": "t",
+            "6": "h",
+            "7": "e",
+            "8": "u",
+            "9": "s"
+          },
           "exemplar": true,
           "expr": "sum(container_memory_swap{job=~\"$job\", instance=~\"$instance\", name=~\"$name\", name!=\"\"}) by (name)",
           "hide": false,
@@ -2173,6 +2673,18 @@
           "step": 240
         },
         {
+          "datasource": {
+            "0": "p",
+            "1": "r",
+            "2": "o",
+            "3": "m",
+            "4": "e",
+            "5": "t",
+            "6": "h",
+            "7": "e",
+            "8": "u",
+            "9": "s"
+          },
           "exemplar": true,
           "expr": "container_memory_usage_bytes{job=~\"$job\", instance=~\"$instance\", name=~\"$name\", name!=\"}",
           "hide": true,
@@ -2225,6 +2737,10 @@
           "value": "current"
         }
       ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "editable": true,
       "error": false,
       "fontSize": "100%",
@@ -2262,6 +2778,10 @@
       ],
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "sum(container_spec_memory_limit_bytes{name=~\".+\"} - container_memory_usage_bytes{name=~\".+\"}) by (name) ",
           "hide": true,
@@ -2273,6 +2793,10 @@
           "step": 240
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "sum(container_spec_memory_limit_bytes{name=~\".+\"}) by (name) ",
           "hide": true,
@@ -2283,6 +2807,10 @@
           "step": 240
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "container_memory_usage_bytes{name=~\".+\"}",
           "hide": false,
@@ -2305,6 +2833,10 @@
           "value": "current"
         }
       ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "editable": true,
       "error": false,
       "fontSize": "100%",
@@ -2344,6 +2876,10 @@
       ],
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "sum(100 - ((container_spec_memory_limit_bytes{name=~\".+\"} - container_memory_usage_bytes{name=~\".+\"})  * 100 / container_spec_memory_limit_bytes{name=~\".+\"}) ) by (name) ",
           "interval": "",
@@ -2354,6 +2890,10 @@
           "step": 240
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "sum(container_spec_memory_limit_bytes{name=~\".+\"}) by (name) ",
           "hide": true,
           "intervalFactor": 2,
@@ -2362,6 +2902,10 @@
           "step": 240
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "container_memory_usage_bytes{name=~\".+\"}",
           "hide": true,
           "intervalFactor": 2,
@@ -2382,6 +2926,10 @@
           "value": "current"
         }
       ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "editable": true,
       "error": false,
       "fontSize": "100%",
@@ -2419,6 +2967,10 @@
       ],
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "sum(container_spec_memory_limit_bytes{name=~\".+\"} - container_memory_usage_bytes{name=~\".+\"}) by (name) ",
           "hide": true,
           "intervalFactor": 2,
@@ -2428,6 +2980,10 @@
           "step": 240
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "sum(container_spec_memory_limit_bytes{name=~\".+\"}) by (name) ",
           "hide": false,
@@ -2438,6 +2994,10 @@
           "step": 240
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "container_memory_usage_bytes{name=~\".+\"}",
           "hide": true,
           "intervalFactor": 2,
@@ -2452,7 +3012,8 @@
     }
   ],
   "refresh": "30s",
-  "schemaVersion": 33,
+  "revision": 1,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [
     "docker",
@@ -2461,11 +3022,34 @@
   "templating": {
     "list": [
       {
-        "allValue": ".*",
         "current": {
           "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "text": "Mimir",
+          "value": "Mimir"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "prometheus.scrape.docker",
+          "value": "prometheus.scrape.docker"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(container_last_seen, job)",
         "hide": 0,
@@ -2491,7 +3075,10 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": "prometheus",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "label_values(container_last_seen, instance)",
         "hide": 0,
         "includeAll": true,
@@ -2515,6 +3102,10 @@
           "selected": false,
           "text": "All",
           "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(container_last_seen{job=~\"$job\", instance=~\"$instance\"}, name)",
         "hide": 0,
@@ -2637,8 +3228,6 @@
       }
     ]
   },
-  "timezone": "browser",
-  "weekStart": "",
   "time": {
     "from": "now-24h",
     "to": "now"
@@ -2667,5 +3256,10 @@
       "7d",
       "30d"
     ]
-  }
+  },
+  "timezone": "browser",
+  "title": "Docker Simple Monitoring",
+  "uid": "simple_docker_dashboard",
+  "version": 4,
+  "weekStart": ""
 }
