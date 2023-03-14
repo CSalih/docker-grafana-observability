@@ -1,32 +1,32 @@
 // Monitor Grafana Agent
-prometheus.scrape "default" {
+prometheus.scrape "scrape_agent" {
   scrape_interval = "5m"
   targets = [{"__address__" = "localhost:12345"}]
-  forward_to = [prometheus.remote_write.prom.receiver]
+  forward_to = [prometheus.remote_write.local.receiver]
 }
 
 // container exporter
 discovery.docker "docker" {
   host = "unix:///var/run/docker.sock"
 }
-prometheus.scrape "docker" {
+prometheus.scrape "scrape_docker" {
   scrape_interval = "1m"
   targets    = discovery.docker.docker.targets
-  forward_to = [prometheus.remote_write.prom.receiver]
+  forward_to = [prometheus.remote_write.local.receiver]
 }
 
 // process exporter
-prometheus.exporter.process "thinkpad" {
+prometheus.exporter.process "local" {
   procfs_path = "/host/proc"
   matcher {
     name = "{{.ExeFull}}"
     cmdline = [".+"]
   }
 }
-prometheus.scrape "thinkpad" {
+prometheus.scrape "scrape_process" {
   scrape_interval = "5m"
-  targets    = prometheus.exporter.process.thinkpad.targets
-  forward_to = [prometheus.remote_write.prom.receiver]
+  targets    = prometheus.exporter.process.local.targets
+  forward_to = [prometheus.remote_write.local.receiver]
 }
 
 // node exporter
@@ -39,15 +39,15 @@ prometheus.exporter.unix {
     mount_points_exclude = "^/(sys|proc|dev|host|etc)($|/)"
   }
 }
-prometheus.scrape "unix_thinkpad" {
+prometheus.scrape "scrape_unix" {
   scrape_interval = "1m"
   targets    = prometheus.exporter.unix.targets
-  forward_to = [prometheus.remote_write.prom.receiver]
+  forward_to = [prometheus.remote_write.local.receiver]
 }
 
 
 // Datasource for Prometheus
-prometheus.remote_write "prom" {
+prometheus.remote_write "local" {
   endpoint {
     url = "http://mimir:9009/api/v1/push"
   }
