@@ -30,7 +30,7 @@ prometheus.scrape "scrape_process" {
 }
 
 // node exporter
-prometheus.exporter.unix {
+prometheus.exporter.unix "local" {
   procfs_path = "/host/proc"
   sysfs_path = "/host/sys"
   rootfs_path = "/rootfs"
@@ -39,9 +39,51 @@ prometheus.exporter.unix {
     mount_points_exclude = "^/(sys|proc|dev|host|etc)($|/)"
   }
 }
+// We need to change the output of prometheus.exporter.unix to be
+// compatible with the node_exporter integration:
+//
+// * Change the job label to integrations/node_exporter.
+// * Change the instance label to be HOSTNAME:LISTEN_PORT.
+// See: https://github.com/grafana/agent/issues/3180
+discovery.relabel "node_exporter" {
+	targets = prometheus.exporter.unix.local.targets
+
+	rule {
+		action       = "replace"
+		target_label = "job"
+		replacement  = "integrations/node_exporter"
+	}
+
+	rule {
+		action       = "replace"
+		target_label = "nodename"
+		replacement  = "localhost"
+	}
+
+	rule {
+		action       = "replace"
+		target_label = "__hostname__"
+		replacement  = "localhost"
+	}
+
+	rule {
+		action        = "replace"
+		source_labels = ["__address__"]
+		target_label  = "__port__"
+		regex         = ".*:(.*)"
+		replacement   = "$1"
+	}
+
+	rule {
+		action        = "replace"
+		source_labels = ["__hostname__", "__port__"]
+		separator     = ":"
+		target_label  = "instance"
+	}
+}
 prometheus.scrape "scrape_unix" {
   scrape_interval = "1m"
-  targets    = prometheus.exporter.unix.targets
+  targets    = discovery.relabel.node_exporter.output
   forward_to = [prometheus.remote_write.local.receiver]
 }
 
