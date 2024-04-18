@@ -18,39 +18,22 @@ services:
     networks:
       - monitoring
 
-  agent:
-    image: grafana/agent:main
-    container_name: grafana-agent
-    restart: unless-stopped
-    entrypoint:
-      - /bin/grafana-agent
+  alloy:
+    image: docker.io/grafana/alloy:latest
+    container_name: grafana-alloy
+    command:
       - run
       - --server.http.listen-addr=0.0.0.0:12345
-      - /etc/agent/agent.river
-    environment:
-      AGENT_MODE: "flow"
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
     volumes:
-      - ./config/agent.river:/etc/agent/agent.river
-      - /var/run:/var/run:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    expose:
-      - 12345
+      - "./config/alloy/config.alloy://etc/alloy/config.alloy"
+      - "/var/run:/var/run:ro"
+      - "/proc:/host/proc:ro"
+      - "/sys:/host/sys:ro"
+      - "/:/rootfs:ro"
     networks:
       - monitoring
-
-  promtail:
-    image: grafana/promtail:latest
-    container_name: grafana-promtail
-    restart: unless-stopped
-    volumes:
-      - ./config/pomtail.yml:/etc/promtail/config.yml
-      - /var/log:/var/log:ro
-      - promtail_data:/data
-    command: -config.file=/etc/promtail/config.yml
-    networks:
-      - loki
 
   mimir:
     image: grafana/mimir:latest
